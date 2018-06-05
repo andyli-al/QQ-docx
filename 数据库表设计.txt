@@ -1,0 +1,126 @@
+数据库：mysql
+数据库名:QQ_db
+
+
+管理员表
+
+create table QQadmin(
+  adminId int primary key not null auto_increment, //主键Id
+  username varchar(20) not null,                   //用户名
+  passwd varchar(16) not null                      //密码
+  );   
+
+QQ用户表
+
+create table QQUser(
+  QQ_No int primary key not null auto_increment,   //QQ号码，默认从10000开始自增
+  QQ_webname varchar(30) not null,                       //网名（昵称）
+  QQ_pswd varchar(20) not null,                          //QQ密码
+  QQ_sign varchar(50),                                   //QQ个性签名
+  u_sex varchar(8) not null,                             //性别
+  u_age int,                                             //年龄
+  u_birthday Date,                                       //生日（公历）
+  u_hometown varchar(30),                                //故乡
+  u_staycity varchar(30),                                //所在地（现居地）
+  u_education varchar(10),                               //学历
+  u_profession varchar(20),                               //职业
+  isOnline int default 0                                //是否在线，0不在线，1在线，2表示被冻结,默认0
+ );
+
+QQ好友表
+
+create table QQ_friend(
+  QQ_friendId int primary key not null auto_increment, //主键Id
+  QQ_No int not null,                                  //用户QQ
+  QQ_friend_No int not null,                           //好友QQ
+  foreign key(QQ_No) references QQUser(QQ_No),
+  foreign key(QQ_friend_No) references QQUser(QQ_No));
+
+空间访问凭证表
+
+create table ZoneAccessToken(
+  zonetokenId varchar(10) primary key not null,
+  QQ_No int not null,
+  QQ_No_Access int not null,
+  foreign key(QQ_No) references QQUser(QQ_No),
+  foreign key(QQ_No_Access) references QQUser(QQ_No));
+
+空间访问权限表
+
+create table ZoneAccessPermission(
+  ZoneAccessPermissionId int primary key not null auto_increment, //主键
+  QQ_No int not null,                                    //用户QQ
+  QQ_friend_No int not null,                             //好友QQ
+  foreign key(QQ_No) references QQUser(QQ_No),
+  foreign key(QQ_friend_No) references QQUser(QQ_No));
+
+说说表
+
+create table talk(
+  talkId int primary key not null auto_increment,  //主键
+  talkcontent varchar(200) not null,               //说说内容
+  talkTime datetime not null,                     //发表时间
+  QQ_No int not null,                            //QQ号码
+  foreign key(QQ_No) references QQUser(QQ_No));
+
+说说评论表
+
+create table talkComment(
+  talkCommentId int primary key not null auto_increment,    //主键
+  talkCommentContent varchar(100) not null,                     //说说评论内容
+  publishDate datetime not null,                             //发表时间
+  talkId int not null,                                          //说说
+  QQ_No int not null,                                          //发表评论的QQ号
+  foreign key(talkId) references talk(talkId), 
+  foreign key(QQ_No) references QQUser(QQ_No));
+
+日志表
+
+create table daily(
+  dailyId int primary key not null auto_increment, //主键
+  dailyTitle varchar(50) not null,                 //日志标题
+  dailyContentFile varchar(50) not null,           //日志内容文件
+  publishDate datetime not null,                   //发表时间
+  QQ_No int not null,                              //QQ号码
+  foreign key(QQ_No) references QQUser(QQ_No));
+
+
+留言表
+
+ create table message(
+  messageId int primary key not null auto_increment, //主键
+  messageContent varchar(200) not null,               //留言内容
+  publishDate datetime not null,                     //发表时间
+  QQ_No int not null,                                    //用户QQ
+  QQ_friend_No int not null,                             //好友QQ
+  foreign key(QQ_No) references QQUser(QQ_No),
+  foreign key(QQ_friend_No) references QQUser(QQ_No));
+
+
+相册表
+
+create table photoAlbum(
+  photoAlbumId int primary key not null auto_increment, //主键
+  photoAlbumName varchar(50) not null,                  //相册名称
+  EditDate datetime not null,                           //更新时间
+  photoAlbumImg varchar(80),                                //相册封面
+  QQ_No int not null,                                  //QQ号码
+  foreign key(QQ_No) references QQUser(QQ_No));
+
+
+照片表
+
+create table photo(
+  photoId int primary key not null auto_increment, //主键
+  photoName varchar(80) not null,                  //照片文件名称
+  size varchar(20) not null,                       //大小
+  uploadDate datetime not null,                   //上传时间
+  photoAlbumId int not null,                       //所属相册
+  foreign key(photoAlbumId) references photoAlbum(photoAlbumId));
+
+
+  
+   
+  
+
+  
